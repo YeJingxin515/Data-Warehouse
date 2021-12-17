@@ -1,0 +1,33 @@
+{
+  "name": "vue-data-warehouse",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@element-plus/icons": "0.0.11",
+    "axios": "^0.21.1",
+    "element-plus": "1.0.2-beta.52",
+    "schart.js": "https://registry.nlark.com/schart.js/download/schart.js-3.0.0.tgz",
+    "vue": "^3.1.2",
+    "vue-cropperjs": "^5.0.0",
+    "vue-i18n": "^9.0.0",
+    "vue-router": "^4.0.10",
+    "vue-schart": "^2.0.0",
+    "vuex": "^4.0.2",
+    "wangeditor": "^4.7.10"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
