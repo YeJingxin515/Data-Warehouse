@@ -19,10 +19,10 @@ public class SearchTimeController{
 
     //根据年份查电影
     @RequestMapping(value= "Year",method = RequestMethod.GET)
-    public Object getByYear(String year){
+    public Object getByYear(TimeObject time){
         JSONObject jsonObject = new JSONObject();
         long start=System.nanoTime();
-        List<FilmTime> targetFilm = filmTimeRepository.findByYear(Integer.parseInt(year.trim()));
+        List<FilmTime> targetFilm = filmTimeRepository.findByYear(Integer.parseInt(time.getYear()));
         long end=System.nanoTime();
         jsonObject.put("data",targetFilm);
         jsonObject.put("time",end-start);
@@ -81,7 +81,6 @@ public class SearchTimeController{
     public static class TimeObject{
         private String year;
         private String month;
-        private String date;
         private String quarter;
     }
 

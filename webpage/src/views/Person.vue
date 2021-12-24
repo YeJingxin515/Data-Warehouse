@@ -1,5 +1,17 @@
 <template>
   <div>
+    <!-- 查询时间的弹窗 -->
+    <el-dialog v-model="timeDialogVisible" title="查询时间" width="30%">
+      <div>
+        <span>查询导演电影时间：</span>
+        <el-input v-model="time1" disabled />
+      </div>
+      <div>
+        <span>查询参演电影时间：</span>
+        <el-input v-model="time2" disabled />
+      </div>
+    </el-dialog>
+
     <div class="container">
       <div class="handle-box">
         <el-autocomplete
@@ -11,12 +23,31 @@
           class="handle-input mr10"
           clearable
         ></el-autocomplete>
-        <el-button type="primary" icon="el-icon-search" @click="searchAll">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="searchAll"
+          >搜索</el-button
+        >
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          @click="timeDialogVisible = true"
+          >查询时间</el-button
+        >
       </div>
 
       <el-tabs type="border-card" @tab-click="changeState">
         <el-tab-pane label="导演的电影">
-          <el-table :data="showData1" stripe style="width: 100%" border>
+          <el-table
+            :data="
+              tableData1.slice(
+                (currentPage - 1) * pagesize,
+                currentPage * pagesize
+              )
+            "
+            style="width: 100%"
+            :cell-style="{ textAlign: 'center' }"
+            :header-cell-style="{ textAlign: 'center' }"
+            stripe
+          >
             <el-table-column
               prop="directorName"
               label="人物姓名"
@@ -29,22 +60,19 @@
             ></el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="主演的电影">
-          <el-table :data="showData2" stripe style="width: 100%" border>
-            <el-table-column
-              prop="actorName"
-              label="人物姓名"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="filmName"
-              label="主演的电影"
-              align="center"
-            ></el-table-column>
-          </el-table>
-        </el-tab-pane>
         <el-tab-pane label="参演的电影">
-          <el-table :data="showData3" stripe style="width: 100%" border>
+          <el-table
+            :data="
+              tableData2.slice(
+                (currentPage - 1) * pagesize,
+                currentPage * pagesize
+              )
+            "
+            style="width: 100%"
+            :cell-style="{ textAlign: 'center' }"
+            :header-cell-style="{ textAlign: 'center' }"
+            stripe
+          >
             <el-table-column
               prop="actorName"
               label="人物姓名"
@@ -57,14 +85,36 @@
             ></el-table-column>
           </el-table>
         </el-tab-pane>
+        <el-tab-pane label="所有人物">
+          <el-table
+            :data="
+              allPerson.slice(
+                (currentPage - 1) * pagesize,
+                currentPage * pagesize
+              )
+            "
+            style="width: 100%"
+            :cell-style="{ textAlign: 'center' }"
+            :header-cell-style="{ textAlign: 'center' }"
+            stripe
+          >
+            <el-table-column
+              prop="name"
+              label="人物姓名"
+              align="center"
+            ></el-table-column>
+          </el-table>
+        </el-tab-pane>
       </el-tabs>
 
       <div class="pagination">
         <el-pagination
           v-model:currentPage="currentPage"
+          :page-sizes="[10, 50, 100, 200]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="totalPage"
+          :total="allPerson.length"
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         >
         </el-pagination>
@@ -79,19 +129,18 @@ export default {
   name: "format",
   data() {
     return {
-      tableData1: [], //表格数据
-      tableData2: [], //表格数据
-      tableData3: [], //表格数据
+      tableData1: [], //导演的电影表格数据
+      tableData2: [], //参演的电影表格数据
 
-      showData1: [], //展示的数据
-      showData2: [], //展示的数据
-      showData3: [], //展示的数据
-
-      search:ref(''), //搜索的名字
       allPerson: [], //所有人物
-      onePerson:"",//某个人的信息
+      search: ref(""), //搜索的名字
+      onePerson: "", //某个人的信息
       persons: ref([]),
       timeout: null,
+
+      timeDialogVisible: false, //显示查询时间
+      time1: "", //查询导演时间
+      time2: "", //查询演员时间
 
       currentPage: 1,
       pagesize: 10,
@@ -102,16 +151,16 @@ export default {
   methods: {
     //获取所有的人的名字
     getAllPerson() {
-      fetch(this.$URL+"/person/all", {
+      fetch(this.$URL + "/Person/All", {
         method: "GET",
       }).then((response) => {
         let result = response.json();
         result.then((result) => {
           this.allPerson = result;
-          console.log(result);
         });
       });
     },
+
     //获取所有人的信息
     loadAllPerson() {
       return this.allPerson;
@@ -131,70 +180,37 @@ export default {
     createStateFilter(queryString) {
       return (search) => {
         return (
-          search.name.toLowerCase().indexOf(queryString.toLowerCase()) !==-1
+          search.name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1
         );
       };
     },
-    handleSelect(item) {
-      console.log(item);
-    },
 
-    //搜索演员主演的电影
+    //搜索演员导演的电影
     searchDirector() {
-      fetch(this.$URL+"person/director/" + this.search, {
+      fetch(this.$URL + "/Person/Director?name=" + this.search, {
         method: "GET",
       }).then((response) => {
         let result = response.json();
         result.then((result) => {
-          this.tableData1 = result;
+          this.tableData1 = result.data;
           this.totalPage = this.tableData1.length;
-          console.log(result);
-          this.showData1 = this.tableData1.filter((item, index) => {
-            return (
-              index < this.currentPage * this.pagesize &&
-              index >= this.pagesize * (this.currentPage - 1)
-            );
-          });
-        });
-      });
-    },
-
-    //搜索演员主演的电影
-    searchMainActor() {
-      fetch(this.$URL+"/person/mainactor/" + this.search, {
-        method: "GET",
-      }).then((response) => {
-        let result = response.json();
-        result.then((result) => {
-          this.tableData2 = result;
-          this.totalPage = this.tableData2.length;
-          console.log(result);
-          this.showData2 = this.tableData2.filter((item, index) => {
-            return (
-              index < this.currentPage * this.pagesize &&
-              index >= this.pagesize * (this.currentPage - 1)
-            );
-          });
+          this.time1 = result.time + "毫秒";
+          this.timeDialogVisible = "true";
         });
       });
     },
 
     //搜索演员参演的电影
     searchActor() {
-      fetch(this.$URL+"/person/actor/" + this.search, {
+      fetch(this.$URL + "/Person/Actor?name=" + this.search, {
         method: "GET",
       }).then((response) => {
         let result = response.json();
         result.then((result) => {
-          this.tableData3 = result;
-          this.totalPage = this.tableData3.length;
-          console.log(result);
-          this.showData3 = this.tableData3.filter((item, index) => {
-            return (
-              index < this.currentPage * this.pagesize &&
-              index >= this.pagesize * (this.currentPage - 1)
-            );
-          });
+          this.tableData2 = result.data;
+          this.totalPage = this.tableData2.length;
+          this.time2 = result.time + "毫秒";
+          this.timeDialogVisible = "true";
         });
       });
     },
@@ -202,13 +218,19 @@ export default {
     //全部搜索
     searchAll() {
       this.searchDirector();
-      this.searchMainActor();
       this.searchActor();
+      this.getAllPerson();
     },
 
+    //分页
+    handleSizeChange(pagesize) {
+      this.pagesize = pagesize;
+    },
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage;
     },
+
+
   },
 
   mounted() {

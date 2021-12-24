@@ -18,6 +18,14 @@ public class SearchPersonController {
     FilmDirectorRepository filmDirectorRepository;
     @Resource
     FilmActorRepository filmActorRepository;
+    @Resource
+    PersonRepository personRepository;
+
+    //查找所有人名
+    @RequestMapping(value= "All",method = RequestMethod.GET)
+    public Object getAll(){
+        return personRepository.findAll();
+    }
 
     //查找所有所有导演
     @RequestMapping(value= "AllDirector",method = RequestMethod.GET)

@@ -1,15 +1,20 @@
 <template>
   <div>
+    <!-- 查询时间的弹窗 -->
+    <el-dialog v-model="timeDialogVisible" title="查询时间" width="30%">
+      <el-input v-model="time" disabled />
+    </el-dialog>
+
     <div class="container">
       <div class="handle-box">
         <el-input
-          v-model="searchYear"
+          v-model="search.year"
           placeholder="输入年份"
           class="handle-input"
           clearable
         ></el-input>
         <el-select
-          v-model="searchQuarter"
+          v-model="search.quarter"
           placeholder="选取季度"
           class="handle-select"
         >
@@ -21,7 +26,7 @@
           ></el-option>
         </el-select>
         <el-select
-          v-model="searchMonth"
+          v-model="search.month"
           placeholder="选取月份"
           class="handle-select mr10"
         >
@@ -32,16 +37,19 @@
             :value="item.num"
           ></el-option>
         </el-select>
-        <el-button type="primary" @click="searchByYear">年份搜索</el-button>
-        <el-button type="primary" @click="searchByYearAndQuarter"
-          >季度搜索</el-button
-        >
-        <el-button type="primary" @click="searchByYearAndMonth"
-          >月份搜索</el-button
-        >
-        <el-button type="primary" @click="getData">所有数据</el-button>
+        <el-button type="primary" @click="search">搜索</el-button>
+        <el-button type="primary" @click="getAll">所有数据</el-button>
+        <el-button type="primary" @click="timeDialogVisible=true">查询时间</el-button>
       </div>
-      <el-table :data="showData" stripe style="width: 100%">
+      <el-table
+        :data="
+          tableData.slice((currentPage - 1) * pagesize, currentPage * pagesize)
+        "
+        style="width: 100%"
+        :cell-style="{ textAlign: 'center' }"
+        :header-cell-style="{ textAlign: 'center' }"
+        stripe
+      >
         <el-table-column
           prop="filmTitle"
           label="电影名字"
@@ -93,9 +101,9 @@ export default {
     return {
       allData: [], //所有数据
       tableData: [], //表格数据
-      showData: [], //展示的数据
 
       month: [
+        { num: 0, name: "不选择月份" },
         { num: 1, name: "January " },
         { num: 2, name: "February" },
         { num: 3, name: "March" },
@@ -111,110 +119,90 @@ export default {
       ],
 
       quarter: [
+        { num: 0, name: "不选择季度" },
         { num: 1, name: "第一季度" },
         { num: 2, name: "第二季度" },
         { num: 3, name: "第三季度" },
         { num: 4, name: "第四季度" },
       ],
 
-      searchYear: "", //年份
-      searchMonth: "", //月份
-      searchQuarter: "", //季度
+      search: {
+        year: "",
+        month: 0,
+        quarter: 0,
+      },
+
+      timeDialogVisible: false, //显示查询时间
+      time: "", //查询时间
 
       currentPage: 1,
       pagesize: 10,
     };
   },
   methods: {
-    // 获取表格数据
-    getData() {
-      fetch(this.$URL+"/time/all", {
+    //获取所有数据
+    getAll() {
+      fetch(this.$URL + "/Time/All", {
         method: "GET",
       }).then((response) => {
         let result = response.json();
         result.then((result) => {
-          this.tableData = result;
-          this.allData = result;
-          this.setPage();
+          this.tableData = result.data;
+          this.allData=result.data;
+          this.time = result.time + "毫秒";
+          this.timeDialogVisible = "true";
         });
       });
     },
 
     //搜索某一年的电影
-    searchByYear() {
-      fetch(this.$URL+"/time/year/" + this.searchYear, {
-        method: "GET",
-      }).then((response) => {
-        let result = response.json();
-        result.then((result) => {
-          this.tableData = result;
-          console.log(result);
-          console.log(this.searchYear);
-          this.setPage();
-        });
-      });
-    },
-
-    //搜索某年某季度的电影
-    searchByYearAndQuarter() {
-      fetch(
-        this.$URL+"/time/yearandquarter/" +
-          this.searchYear +
-          "/" +
-          this.searchQuarter,
-        {
+    search() {
+      //搜索年份
+      if (this.search.month == 0 && this.search.quarter == 0) {
+        fetch(this.$URL + "/Time/Year" + this.time, {
           method: "GET",
-        }
-      ).then((response) => {
-        let result = response.json();
-        result.then((result) => {
-          this.tableData = result;
-          this.setPage();
-          console.log(this.searchQuarter);
+        }).then((response) => {
+          let result = response.json();
+          result.then((result) => {
+            this.tableData = result.data;
+            this.time = result.time + "毫秒";
+            this.timeDialogVisible = "true";
+          });
         });
-      });
-    },
-
-    //搜索某年某月的电影
-    searchByYearAndMonth() {
-      fetch(
-        this.$URL+"/time/yearandmonth/" +
-          this.searchYear +
-          "/" +
-          this.searchMonth,
-        {
+      } else if (this.time.month != 0) {
+        fetch(this.$URL + "/Time/YearAndMonth" + this.search, {
           method: "GET",
-        }
-      ).then((response) => {
-        let result = response.json();
-        result.then((result) => {
-          this.tableData = result;
-          this.setPage();
+        }).then((response) => {
+          let result = response.json();
+          result.then((result) => {
+            this.tableData = result.data;
+            this.time = result.time + "毫秒";
+            this.timeDialogVisible = "true";
+          });
         });
-      });
+      }else if (this.time.quarter != 0) {
+        fetch(this.$URL + "/YearAndQuarter" + this.search, {
+          method: "GET",
+        }).then((response) => {
+          let result = response.json();
+          result.then((result) => {
+            this.tableData = result.data;
+            this.time = result.time + "毫秒";
+            this.timeDialogVisible = "true";
+          });
+        });
+      }
     },
 
     //分页
     handleSizeChange(pagesize) {
-      this.pagesize = pagesize;
-      this.setPage();
+      this.pagesize = pagesize;;
     },
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage;
-      this.setPage();
-    },
-
-    setPage() {
-      this.showData = this.tableData.filter((item, index) => {
-        return (
-          index < this.currentPage * this.pagesize &&
-          index >= this.pagesize * (this.currentPage - 1)
-        );
-      });
     },
   },
   mounted() {
-    this.getData();
   },
 };
 </script>

@@ -31,12 +31,12 @@ const routes = [
                 component: () => import ( /* webpackChunkName: "table" */ "../views/Person.vue")
             }, 
             {
-                path: "/format",
-                name: "format",
+                path: "/genre",
+                name: "genre",
                 meta: {
-                    title: '版本查询'
+                    title: '类型查询'
                 },
-                component: () => import ( /* webpackChunkName: "table" */ "../views/Format.vue")
+                component: () => import ( /* webpackChunkName: "table" */ "../views/Genre.vue")
             }, 
             {
                 path: "/time",

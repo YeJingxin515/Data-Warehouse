@@ -61,14 +61,15 @@ export default {
         index: "0",
         title: "MySQL关系型数据库",
         subs: [
-          {
-            index: "/format",
-            title: "版本查询",
-          },
-          {
+              {
             index: "/information",
             title: "信息查询",
           },
+          {
+            index: "/genre",
+            title: "类型查询",
+          },
+      
           {
             index: "/time",
             title: "时间查询",

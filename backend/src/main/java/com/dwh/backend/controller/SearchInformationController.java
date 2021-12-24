@@ -40,7 +40,7 @@ public class SearchInformationController {
     @RequestMapping(value = "SearchCombination",method = RequestMethod.GET)
     public Object searchCombination(@RequestBody Film film) {
         JSONObject jsonObject = new JSONObject();
-        List<String>genres=film.getGenre();
+        List<String>genres=film.getGenres();
         Integer rate= Integer.parseInt(film.getRate());
         if(genres==null&&rate!=-1){//只查询好评
             long start=System.nanoTime();
@@ -95,7 +95,7 @@ public class SearchInformationController {
 
     @Data
     private static class Film{
-        private List<String> genre;
+        private List<String> genres;
         private String rate;
     }
 
