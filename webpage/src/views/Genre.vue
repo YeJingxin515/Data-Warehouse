@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 查询时间的弹窗 -->
-    <el-dialog v-model="timeDialogVisible" title="查询时间" width="30%">
+    <el-dialog v-model="timeDialogVisible" title="搜索时间" width="30%">
       <el-input v-model="time" disabled />
     </el-dialog>
 
@@ -19,7 +19,7 @@
             :value="item.genreName"
           ></el-option>
         </el-select>
-        <el-button type="primary" @click="timeDialogVisible=true">查询时间 </el-button>
+        <el-button plain type="primary" @click="timeDialogVisible=true">显示上一次搜索时间 </el-button>
       </div>
       <el-table
         :data="

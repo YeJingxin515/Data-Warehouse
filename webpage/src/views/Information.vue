@@ -9,59 +9,44 @@
       <div class="demo-collapse">
         <el-autocomplete
           v-model="searchName"
-          placeholder="输入您要搜索的人物名字"
+          placeholder="输入您要搜索的电影名字"
           :fetch-suggestions="querySearch"
           @select="handleSelect"
           value-key="name"
           class="handle-input mr10"
           clearable
         ></el-autocomplete>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          @click="searchByName"
-          >人物搜索</el-button
+        <el-button type="primary" icon="el-icon-search" @click="searchByName"
+          >搜索</el-button
         >
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          @click="search"
+        <el-button type="primary" icon="el-icon-search" @click="search"
           >组合查询</el-button
         >
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          @click="timeDialogVisible = true"
-          >搜索时间</el-button
+        <el-button plain type="primary" @click="timeDialogVisible = true"
+          >显示上一次搜索时间</el-button
         >
-        <el-button type="primary" icon="el-icon-search" @click="getAll"
-          >所有数据</el-button
-        >
+        <el-button plain type="primary" @click="getAll">所有数据</el-button>
         <el-collapse v-model="activeName" accordion>
           <el-collapse-item title="请选择类型" name="1">
             <div>
-              <el-tag
-                v-for="tag in search.genres"
-                :key="tag"
-                closable
-                :disable-transitions="false"
-                @close="handleClose(tag)"
-              >
-                {{ tag }}
-              </el-tag>
               <el-select
-                v-if="selectVisible"
-                ref="saveTagInput"
-                v-model="inputValue"
-                class="input-new-tag"
-                @change="handleInputConfirm"
-                @blur="handleInputConfirm"
-                ><el-option v-for="item in allGenre" :key="item" :value="item">
-                </el-option
-              ></el-select>
-              <el-button v-else class="button-new-tag" @click="showSelect"
-                >+ 新的电影类型</el-button
+                v-model="search.genre"
+                multiple
+                filterable
+                allow-create
+                default-first-option
+                placeholder="请选择电影类型"
+
+                @change="change"
               >
+                <el-option
+                  v-for="item in allGenre"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                >
+                </el-option>
+              </el-select>
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -138,7 +123,7 @@ export default {
       time: "", //查询时间
 
       search: {
-        genres: [],
+        genres: ref([]),
         rate: -1,
       },
 
@@ -154,12 +139,41 @@ export default {
         },
       ],
 
-      selectVisible: false,
+        allGenre: [
+        "Film-Noir",
+        "Action",
+        "War",
+        "History",
+        "Western",
+        "Documentary",
+        "Sport",
+        "Thriller",
+        "News",
+        "Biography",
+        "Comedy",
+        "Mystery",
+        "Musical",
+        "Short",
+        "Talk-Show",
+        "Adventure",
+        "Horror",
+        "Romance",
+        "Sci-Fi",
+        "Drama",
+        "Music",
+        "Game-Show",
+        "Crime",
+        "Fantasy",
+        "Family",
+        "Animation",
+        "Reality-TV",
+      ],
 
       currentPage: 1,
       pagesize: 10,
-      totalPage: "",
-      inputValue: "",
+
+      selectVisible: false,
+      selectValue: "", //选择的值
     };
   },
 
@@ -218,66 +232,38 @@ export default {
       this.search.genres.splice(this.search.genres.indexOf(tag), 1);
     },
 
-    showSelect() {
-      this.selectVisible = true;
-      this.$nextTick((_) => {
-        this.$refs.saveTag.$refs.input.focus();
-      });
-    },
+    // showSelect() {
+    //   this.selectVisible = true;
+    //   this.$nextTick((_) => {
+    //     this.$refs.saveTagSelect.$refs..focus();
+    //   });
+    // },
 
-    handleInputConfirm() {
-      const inputValue = this.inputValue;
-      if (inputValue) {
-        this.search.genres.push(inputValue);
-      }
-      this.inputValue = "";
-      for (let tag of this.search.genres) {
-        console.log(tag);
-      }
-    },
+    // handleSelectConfirm() {
+    //   const selectValue = this.selectValue;
+    //   if (selectValue) {
+    //     this.search.genres.push(selecttValue);
+    //   }
+    //   this.selectValue = "";
+    //   this.selectVisible = false;
+    //   for (let tag of this.dynamicTags) {
+    //     console.log(tag);
+    //   }
+    // },
 
-    //好坏过滤器
+    //电影口碑过滤器
     stateFormat(row) {
       if (row.rate == "1") return "较好";
       else if (row.rate == "0") return "较差";
     },
+
+     //强制循环
+    change() {
+      this.$forceUpdate();
+    },
   },
   mounted() {
     this.getAll();
-  },
-
-  setup() {
-    return {
-      allGenre: ref([
-        "Film-Noir",
-        "Action",
-        "War",
-        "History",
-        "Western",
-        "Documentary",
-        "Sport",
-        "Thriller",
-        "News",
-        "Biography",
-        "Comedy",
-        "Mystery",
-        "Musical",
-        "Short",
-        "Talk-Show",
-        "Adventure",
-        "Horror",
-        "Romance",
-        "Sci-Fi",
-        "Drama",
-        "Music",
-        "Game-Show",
-        "Crime",
-        "Fantasy",
-        "Family",
-        "Animation",
-        "Reality-TV",
-      ]),
-    };
   },
 };
 </script>

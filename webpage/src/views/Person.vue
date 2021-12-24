@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 查询时间的弹窗 -->
-    <el-dialog v-model="timeDialogVisible" title="查询时间" width="30%">
+    <el-dialog v-model="timeDialogVisible" title="搜索时间" width="30%">
       <div>
         <span>查询导演电影时间：</span>
         <el-input v-model="time1" disabled />
@@ -27,10 +27,10 @@
           >搜索</el-button
         >
         <el-button
+          plain
           type="primary"
-          icon="el-icon-search"
           @click="timeDialogVisible = true"
-          >查询时间</el-button
+          >显示上一次搜索时间</el-button
         >
       </div>
 
@@ -229,8 +229,6 @@ export default {
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage;
     },
-
-
   },
 
   mounted() {

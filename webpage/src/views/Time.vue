@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 查询时间的弹窗 -->
-    <el-dialog v-model="timeDialogVisible" title="查询时间" width="30%">
+    <el-dialog v-model="timeDialogVisible" title="搜索时间" width="30%">
       <el-input v-model="time" disabled />
     </el-dialog>
 
@@ -10,12 +10,15 @@
         <el-input
           v-model="search.year"
           placeholder="输入年份"
+          @input="change"
           class="handle-input"
           clearable
         ></el-input>
         <el-select
           v-model="search.quarter"
+          :disabled="search.month != '0'"
           placeholder="选取季度"
+          @change="change"
           class="handle-select"
         >
           <el-option
@@ -27,7 +30,9 @@
         </el-select>
         <el-select
           v-model="search.month"
+          :disabled="search.quarter != '0'"
           placeholder="选取月份"
+          @change="change"
           class="handle-select mr10"
         >
           <el-option
@@ -37,9 +42,11 @@
             :value="item.num"
           ></el-option>
         </el-select>
-        <el-button type="primary" @click="search">搜索</el-button>
+        <el-button type="primary" @click="searchFilm">搜索</el-button>
         <el-button type="primary" @click="getAll">所有数据</el-button>
-        <el-button type="primary" @click="timeDialogVisible=true">查询时间</el-button>
+        <el-button plain type="primary" @click="timeDialogVisible = true"
+          >显示上一次搜索时间</el-button
+        >
       </div>
       <el-table
         :data="
@@ -148,7 +155,7 @@ export default {
         let result = response.json();
         result.then((result) => {
           this.tableData = result.data;
-          this.allData=result.data;
+          this.allData = result.data;
           this.time = result.time + "毫秒";
           this.timeDialogVisible = "true";
         });
@@ -156,11 +163,15 @@ export default {
     },
 
     //搜索某一年的电影
-    search() {
+    searchFilm() {
       //搜索年份
       if (this.search.month == 0 && this.search.quarter == 0) {
-        fetch(this.$URL + "/Time/Year" + this.time, {
-          method: "GET",
+        fetch(this.$URL + "/Time/Year", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.search),
         }).then((response) => {
           let result = response.json();
           result.then((result) => {
@@ -169,23 +180,33 @@ export default {
             this.timeDialogVisible = "true";
           });
         });
-      } else if (this.time.month != 0) {
-        fetch(this.$URL + "/Time/YearAndMonth" + this.search, {
-          method: "GET",
+      } else if (this.search.month != 0) {
+        fetch(this.$URL + "/Time/YearAndMonth", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.search),
         }).then((response) => {
           let result = response.json();
           result.then((result) => {
+            console.log("yearmonth");
             this.tableData = result.data;
             this.time = result.time + "毫秒";
             this.timeDialogVisible = "true";
           });
         });
-      }else if (this.time.quarter != 0) {
-        fetch(this.$URL + "/YearAndQuarter" + this.search, {
-          method: "GET",
+      } else if (this.search.quarter != 0) {
+        fetch(this.$URL + "/Time/YearAndQuarter", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(this.search),
         }).then((response) => {
           let result = response.json();
           result.then((result) => {
+            console.log("yearqurter");
             this.tableData = result.data;
             this.time = result.time + "毫秒";
             this.timeDialogVisible = "true";
@@ -196,14 +217,18 @@ export default {
 
     //分页
     handleSizeChange(pagesize) {
-      this.pagesize = pagesize;;
+      this.pagesize = pagesize;
     },
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage;
     },
+
+    //强制循环
+    change() {
+      this.$forceUpdate();
+    },
   },
-  mounted() {
-  },
+  mounted() {},
 };
 </script>
 

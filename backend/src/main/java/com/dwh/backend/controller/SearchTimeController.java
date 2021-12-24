@@ -18,8 +18,8 @@ public class SearchTimeController{
     FilmTimeRepository filmTimeRepository;
 
     //根据年份查电影
-    @RequestMapping(value= "Year",method = RequestMethod.GET)
-    public Object getByYear(TimeObject time){
+    @RequestMapping(value= "Year",method = RequestMethod.POST)
+    public Object getByYear(@RequestBody TimeObject time){
         JSONObject jsonObject = new JSONObject();
         long start=System.nanoTime();
         List<FilmTime> targetFilm = filmTimeRepository.findByYear(Integer.parseInt(time.getYear()));
@@ -30,7 +30,7 @@ public class SearchTimeController{
     }
 
     //根据年份和月份查电影
-    @RequestMapping(value= "YearAndMonth",method = RequestMethod.GET)
+    @RequestMapping(value= "YearAndMonth",method = RequestMethod.POST)
     public Object getByYearAndMonth(@RequestBody TimeObject time){
         JSONObject jsonObject = new JSONObject();
         long start=System.nanoTime();
@@ -47,7 +47,7 @@ public class SearchTimeController{
     }
 
     //根据年份和月份查电影
-    @RequestMapping(value= "YearAndQuarter",method = RequestMethod.GET)
+    @RequestMapping(value= "YearAndQuarter",method = RequestMethod.POST)
     public Object getByYearAndQuarter(@RequestBody TimeObject time){
         JSONObject jsonObject = new JSONObject();
         long start=System.nanoTime();

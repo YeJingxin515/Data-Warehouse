@@ -25,7 +25,7 @@ public class SearchInformationController {
     }
 
     //查找某一部电影
-    @RequestMapping(value = "SearchFormat",method = RequestMethod.GET)
+    @RequestMapping(value = "SearchFormat",method = RequestMethod.POST)
     public Object searchFormat(String name){
         JSONObject jsonObject = new JSONObject();
         long start=System.nanoTime();
@@ -37,7 +37,7 @@ public class SearchInformationController {
     }
 
     //查找电影类型+好评组合查询
-    @RequestMapping(value = "SearchCombination",method = RequestMethod.GET)
+    @RequestMapping(value = "SearchCombination",method = RequestMethod.POST)
     public Object searchCombination(@RequestBody Film film) {
         JSONObject jsonObject = new JSONObject();
         List<String>genres=film.getGenres();
