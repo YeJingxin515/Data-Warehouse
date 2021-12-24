@@ -5,9 +5,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FilmTimeRepository extends JpaRepository<FilmTime, Integer> {
     List<FilmTime> findByYear(Integer year);
-    List<FilmTime> findByYearAndMonth(Integer year,String month);
+    List<FilmTime> findByYearAndMonth(Integer year,Integer month);
     List<FilmTime> findByYearAndQuarter(Integer year,Integer quarter);
 }

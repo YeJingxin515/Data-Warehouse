@@ -7,9 +7,9 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
-public class Person {
+public class Genre {
     private int id;
-    private String name;
+    private String genreName;
 
     @Id
     @Column(name = "id")
@@ -22,25 +22,25 @@ public class Person {
     }
 
     @Basic
-    @Column(name = "name")
-    public String getName() {
-        return name;
+    @Column(name = "genre_name")
+    public String getGenreName() {
+        return genreName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGenreName(String genreName) {
+        this.genreName = genreName;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return id == person.id && Objects.equals(name, person.name);
+        Genre genre = (Genre) o;
+        return id == genre.id && Objects.equals(genreName, genre.genreName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, genreName);
     }
 }

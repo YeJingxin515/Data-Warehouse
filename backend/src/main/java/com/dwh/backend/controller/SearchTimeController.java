@@ -1,43 +1,88 @@
 package com.dwh.backend.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dwh.backend.model.FilmTime;
 import com.dwh.backend.repository.FilmTimeRepository;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import lombok.Data;
+
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
-@Controller
-@RequestMapping("time")
-public class SearchTimeController {
+
+@RestController
+@RequestMapping("Time")
+public class SearchTimeController{
     @Resource
     FilmTimeRepository filmTimeRepository;
 
-    @RequestMapping(value= "year/{year}",method = RequestMethod.GET)
-    @ResponseBody
-    public List<FilmTime> getByYear(@PathVariable String year){
-        return filmTimeRepository.findByYear(Integer.parseInt(year.trim()));
+    //根据年份查电影
+    @RequestMapping(value= "Year",method = RequestMethod.GET)
+    public Object getByYear(String year){
+        JSONObject jsonObject = new JSONObject();
+        long start=System.nanoTime();
+        List<FilmTime> targetFilm = filmTimeRepository.findByYear(Integer.parseInt(year.trim()));
+        long end=System.nanoTime();
+        jsonObject.put("data",targetFilm);
+        jsonObject.put("time",end-start);
+        return jsonObject;
     }
 
-    @RequestMapping(value= "yearandmonth/{year}/{month}",method = RequestMethod.GET)
-    @ResponseBody
-    public List<FilmTime> getByYearAndMonth(@PathVariable String year,@PathVariable String month){
-        return filmTimeRepository.findByYearAndMonth(Integer.parseInt(year.trim()),month);
+    //根据年份和月份查电影
+    @RequestMapping(value= "YearAndMonth",method = RequestMethod.GET)
+    public Object getByYearAndMonth(@RequestBody TimeObject time){
+        JSONObject jsonObject = new JSONObject();
+        long start=System.nanoTime();
+        List<FilmTime> targetFilm = filmTimeRepository.findByYearAndMonth(Integer.parseInt(time.getYear()), Integer.parseInt(time.getMonth()));
+        long end=System.nanoTime();
+        if (targetFilm.isEmpty()) {
+            jsonObject.put("message", "您查找的电影不存在不存在，查找信息失败!");
+            jsonObject.put("status", -1);
+        } else {
+            jsonObject.put("data",targetFilm);
+            jsonObject.put("time",end-start);
+        }
+        return jsonObject;
     }
 
-    @RequestMapping(value="yearandquarter/{year}/{quarter}",method = RequestMethod.GET)
-    @ResponseBody
-    public List<FilmTime> getByYearAndQuarter(@PathVariable String year,@PathVariable String quarter){
-        return filmTimeRepository.findByYearAndQuarter(Integer.parseInt(year.trim()),Integer.parseInt(quarter.trim()));
+    //根据年份和月份查电影
+    @RequestMapping(value= "YearAndQuarter",method = RequestMethod.GET)
+    public Object getByYearAndQuarter(@RequestBody TimeObject time){
+        JSONObject jsonObject = new JSONObject();
+        long start=System.nanoTime();
+        List<FilmTime> targetFilm = filmTimeRepository.findByYearAndQuarter(Integer.parseInt(time.getYear()),Integer.parseInt(time.getQuarter()));
+        long end=System.nanoTime();
+        if (targetFilm.isEmpty()) {
+            jsonObject.put("message", "您查找的电影不存在不存在，查找信息失败!");
+            jsonObject.put("status", -1);
+        } else {
+            jsonObject.put("data",targetFilm);
+            jsonObject.put("time",end-start);
+        }
+        return jsonObject;
     }
 
-    @RequestMapping(value="all",method = RequestMethod.GET)
-    @ResponseBody
-    public List<FilmTime> getAll(){
-        return filmTimeRepository.findAll();
+    //表格所有数据
+    @RequestMapping(value="All",method = RequestMethod.GET)
+    public Object getAll(){
+        JSONObject jsonObject = new JSONObject();
+        long start=System.nanoTime();
+        List<FilmTime> targetFilm = filmTimeRepository.findAll();
+        long end=System.nanoTime();
+        jsonObject.put("data",targetFilm);
+        jsonObject.put("time",end-start);
+        return jsonObject;
     }
+
+
+    //时间搜索
+    @Data
+    public static class TimeObject{
+        private String year;
+        private String month;
+        private String date;
+        private String quarter;
+    }
+
 }

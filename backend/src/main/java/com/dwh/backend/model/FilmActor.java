@@ -1,30 +1,39 @@
 package com.dwh.backend.model;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Objects;
 
-@Table(name = "film_actor")
 @Entity
+@Table(name = "film_actor", schema = "data_warehouse", catalog = "")
+@IdClass(FilmActorPK.class)
 public class FilmActor {
-    @EmbeddedId
-    private FilmActorId id;
-
-    @Column(name = "actor_name", length = 50)
+    private int actorId;
+    private int filmId;
     private String actorName;
-
-    @Column(name = "film_name", length = 50)
     private String filmName;
 
-    public String getFilmName() {
-        return filmName;
+    @Id
+    @Column(name = "actor_id")
+    public int getActorId() {
+        return actorId;
     }
 
-    public void setFilmName(String filmName) {
-        this.filmName = filmName;
+    public void setActorId(int actorId) {
+        this.actorId = actorId;
     }
 
+    @Id
+    @Column(name = "film_id")
+    public int getFilmId() {
+        return filmId;
+    }
+
+    public void setFilmId(int filmId) {
+        this.filmId = filmId;
+    }
+
+    @Basic
+    @Column(name = "actor_name")
     public String getActorName() {
         return actorName;
     }
@@ -33,11 +42,26 @@ public class FilmActor {
         this.actorName = actorName;
     }
 
-    public FilmActorId getId() {
-        return id;
+    @Basic
+    @Column(name = "film_name")
+    public String getFilmName() {
+        return filmName;
     }
 
-    public void setId(FilmActorId id) {
-        this.id = id;
+    public void setFilmName(String filmName) {
+        this.filmName = filmName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FilmActor filmActor = (FilmActor) o;
+        return actorId == filmActor.actorId && filmId == filmActor.filmId && Objects.equals(actorName, filmActor.actorName) && Objects.equals(filmName, filmActor.filmName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(actorId, filmId, actorName, filmName);
     }
 }

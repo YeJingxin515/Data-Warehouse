@@ -4,27 +4,29 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "film_merged", schema = "data_warehouse", catalog = "")
-public class FilmMerged {
-    private int id;
+@Table(name = "film_original", schema = "data_warehouse", catalog = "")
+public class FilmOriginal {
+    private String asin;
     private String title;
+    private String format;
+    private String director;
+    private String actor;
     private String rating;
     private String releaseDate;
     private String producer;
     private String language;
     private String genre;
-    private String formatNum;
+    private String belong;
     private Integer rate;
-    private String dateFrom;
 
     @Id
-    @Column(name = "id")
-    public int getId() {
-        return id;
+    @Column(name = "asin")
+    public String getAsin() {
+        return asin;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setAsin(String asin) {
+        this.asin = asin;
     }
 
     @Basic
@@ -35,6 +37,36 @@ public class FilmMerged {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Basic
+    @Column(name = "format")
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    @Basic
+    @Column(name = "director")
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    @Basic
+    @Column(name = "actor")
+    public String getActor() {
+        return actor;
+    }
+
+    public void setActor(String actor) {
+        this.actor = actor;
     }
 
     @Basic
@@ -88,13 +120,13 @@ public class FilmMerged {
     }
 
     @Basic
-    @Column(name = "format_num")
-    public String getFormatNum() {
-        return formatNum;
+    @Column(name = "belong")
+    public String getBelong() {
+        return belong;
     }
 
-    public void setFormatNum(String formatNum) {
-        this.formatNum = formatNum;
+    public void setBelong(String belong) {
+        this.belong = belong;
     }
 
     @Basic
@@ -107,26 +139,16 @@ public class FilmMerged {
         this.rate = rate;
     }
 
-    @Basic
-    @Column(name = "date_from")
-    public String getDateFrom() {
-        return dateFrom;
-    }
-
-    public void setDateFrom(String dateFrom) {
-        this.dateFrom = dateFrom;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        FilmMerged that = (FilmMerged) o;
-        return id == that.id && Objects.equals(title, that.title) && Objects.equals(rating, that.rating) && Objects.equals(releaseDate, that.releaseDate) && Objects.equals(producer, that.producer) && Objects.equals(language, that.language) && Objects.equals(genre, that.genre) && Objects.equals(formatNum, that.formatNum) && Objects.equals(rate, that.rate) && Objects.equals(dateFrom, that.dateFrom);
+        FilmOriginal that = (FilmOriginal) o;
+        return Objects.equals(asin, that.asin) && Objects.equals(title, that.title) && Objects.equals(format, that.format) && Objects.equals(director, that.director) && Objects.equals(actor, that.actor) && Objects.equals(rating, that.rating) && Objects.equals(releaseDate, that.releaseDate) && Objects.equals(producer, that.producer) && Objects.equals(language, that.language) && Objects.equals(genre, that.genre) && Objects.equals(belong, that.belong) && Objects.equals(rate, that.rate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, rating, releaseDate, producer, language, genre, formatNum, rate, dateFrom);
+        return Objects.hash(asin, title, format, director, actor, rating, releaseDate, producer, language, genre, belong, rate);
     }
 }

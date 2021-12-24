@@ -1,30 +1,39 @@
 package com.dwh.backend.model;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Objects;
 
-@Table(name = "film_director")
 @Entity
+@Table(name = "film_director", schema = "data_warehouse", catalog = "")
+@IdClass(FilmDirectorPK.class)
 public class FilmDirector {
-    @EmbeddedId
-    private FilmDirectorId id;
-
-    @Column(name = "director_name", length = 50)
+    private int directorId;
+    private int filmId;
     private String directorName;
-
-    @Column(name = "film_name", length = 50)
     private String filmName;
 
-    public String getFilmName() {
-        return filmName;
+    @Id
+    @Column(name = "director_id")
+    public int getDirectorId() {
+        return directorId;
     }
 
-    public void setFilmName(String filmName) {
-        this.filmName = filmName;
+    public void setDirectorId(int directorId) {
+        this.directorId = directorId;
     }
 
+    @Id
+    @Column(name = "film_id")
+    public int getFilmId() {
+        return filmId;
+    }
+
+    public void setFilmId(int filmId) {
+        this.filmId = filmId;
+    }
+
+    @Basic
+    @Column(name = "director_name")
     public String getDirectorName() {
         return directorName;
     }
@@ -33,11 +42,26 @@ public class FilmDirector {
         this.directorName = directorName;
     }
 
-    public FilmDirectorId getId() {
-        return id;
+    @Basic
+    @Column(name = "film_name")
+    public String getFilmName() {
+        return filmName;
     }
 
-    public void setId(FilmDirectorId id) {
-        this.id = id;
+    public void setFilmName(String filmName) {
+        this.filmName = filmName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FilmDirector that = (FilmDirector) o;
+        return directorId == that.directorId && filmId == that.filmId && Objects.equals(directorName, that.directorName) && Objects.equals(filmName, that.filmName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(directorId, filmId, directorName, filmName);
     }
 }

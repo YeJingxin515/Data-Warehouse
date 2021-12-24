@@ -1,57 +1,71 @@
 package com.dwh.backend.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dwh.backend.model.*;
-import com.dwh.backend.repository.FilmActorMainRepository;
 import com.dwh.backend.repository.FilmActorRepository;
 import com.dwh.backend.repository.FilmDirectorRepository;
 import com.dwh.backend.repository.PersonRepository;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
-@Controller
-@RequestMapping("person")
+@RestController
+@RequestMapping("Person")
 public class SearchPersonController {
-    @Resource
-    FilmActorRepository filmActorRepository;
-    @Resource
-    FilmActorMainRepository filmActorMainRepository;
     @Resource
     FilmDirectorRepository filmDirectorRepository;
     @Resource
-    PersonRepository personRepository;
+    FilmActorRepository filmActorRepository;
 
-    //搜索人物主演的电影
-    @RequestMapping(value="mainactor/{actorName}",method = RequestMethod.GET)
-    @ResponseBody
-    public List<FilmActorMain> getByActorMain(@PathVariable String actorName){
-        return filmActorMainRepository.findByActorName(actorName);
+    //查找所有所有导演
+    @RequestMapping(value= "AllDirector",method = RequestMethod.GET)
+    public Object getAllDirector(){
+        JSONObject jsonObject = new JSONObject();
+        long start=System.nanoTime();
+        List<FilmDirector> targetFilm = filmDirectorRepository.findAll();
+        long end=System.nanoTime();
+        jsonObject.put("data",targetFilm);
+        jsonObject.put("time",end-start);
+        return jsonObject;
     }
 
-    //搜索人物参演的电影
-    @RequestMapping(value="actor/{actorName}",method = RequestMethod.GET)
-    @ResponseBody
-    public List<FilmActor> getByActor(@PathVariable String actorName){
-        return filmActorRepository.findByActorName(actorName);
+    //查找所有演员
+    @RequestMapping(value= "AllActor",method = RequestMethod.GET)
+    public Object getAllActor(){
+        JSONObject jsonObject = new JSONObject();
+        long start=System.nanoTime();
+        List<FilmActor> targetFilm =  filmActorRepository.findAll();
+        long end=System.nanoTime();
+        jsonObject.put("data",targetFilm);
+        jsonObject.put("time",end-start);
+        return jsonObject;
     }
 
-    //搜索人物导演的电影
-    @RequestMapping(value="director/{directorName}",method = RequestMethod.GET)
-    @ResponseBody
-    public List<FilmDirector> getByDirector(@PathVariable String directorName){
-        return filmDirectorRepository.findByDirectorName(directorName);
+    //按照导演姓名查找电影
+    @RequestMapping(value= "Director",method = RequestMethod.GET)
+    public Object getByDirector(String name){
+        JSONObject jsonObject = new JSONObject();
+        long start=System.nanoTime();
+        List<FilmDirector> targetFilm = filmDirectorRepository.findByDirectorName(name);
+        long end=System.nanoTime();
+        jsonObject.put("data",targetFilm);
+        jsonObject.put("time",end-start);
+        return jsonObject;
     }
 
-    //所有人物
-    @RequestMapping(value="all",method = RequestMethod.GET)
-    @ResponseBody
-    public List<Person> getAll(){
-        return personRepository.findAll();
+    //按照演员姓名查找电影
+    @RequestMapping(value= "Actor",method = RequestMethod.GET)
+    public Object getByActor(String name){
+        JSONObject jsonObject = new JSONObject();
+        long start=System.nanoTime();
+        List<FilmActor> targetFilm = filmActorRepository.findByActorName(name);
+        long end=System.nanoTime();
+        jsonObject.put("data",targetFilm);
+        jsonObject.put("time",end-start);
+        return jsonObject;
     }
+
 
 }
