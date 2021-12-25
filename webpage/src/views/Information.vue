@@ -19,7 +19,7 @@
         <el-button type="primary" icon="el-icon-search" @click="searchByName"
           >搜索</el-button
         >
-        <el-button type="primary" icon="el-icon-search" @click="search"
+        <el-button type="primary" icon="el-icon-search" @click="searchCombination"
           >组合查询</el-button
         >
         <el-button plain type="primary" @click="timeDialogVisible = true"
@@ -29,25 +29,73 @@
         <el-collapse v-model="activeName" accordion>
           <el-collapse-item title="请选择类型" name="1">
             <div>
-              <el-select
-                v-model="search.genre"
-                multiple
-                filterable
-                allow-create
-                default-first-option
-                placeholder="请选择电影类型"
-
-                @change="change"
+              <el-tag
+                v-for="tag in search.genres"
+                :key="tag"
+                closable
+                :disable-transitions="false"
+                @close="handleClose(tag)"
               >
-                <el-option
-                  v-for="item in allGenre"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                >
-                </el-option>
-              </el-select>
+                {{ tag }}
+              </el-tag>
+              <el-input
+                v-if="inputVisible"
+                ref="saveTagInput"
+                v-model="inputValue"
+                class="input-new-tag"
+                size="mini"
+                @keyup.enter="handleInputConfirm"
+                @blur="handleInputConfirm"
+              >
+              </el-input>
+              <el-button
+                v-else
+                class="button-new-tag"
+                style="margin-bottom: 8px"
+                size="small"
+                @click="showInput"
+                >+ 添加电影类型</el-button
+              >
             </div>
+            <div class="tag-group">
+              <div>
+                <span style="margin-bottom: 8px">所有电影类型</span>
+              </div>
+            </div>
+            <div class="tag-group">
+              <el-tag
+                v-for="item in allGenre1"
+                :key="item"
+                :type="item"
+                effect="plain"
+              >
+                {{ item }}
+              </el-tag>
+            </div>
+            <div class="tag-group">
+              <el-tag
+                v-for="item in allGenre2"
+                :key="item"
+                :type="item"
+                effect="plain"
+              >
+                {{ item }}
+              </el-tag>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item title="请选择电影口碑" name="2">
+            <el-select
+              v-model="search.rate"
+              placeholder="选取电影口碑"
+              @change="change"
+            >
+              <el-option
+                v-for="(item, index) in rates"
+                :key="index"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
           </el-collapse-item>
         </el-collapse>
       </div>
@@ -122,24 +170,29 @@ export default {
       timeDialogVisible: false, //显示查询时间
       time: "", //查询时间
 
+      //组合查询搜索时间
       search: {
-        genres: ref([]),
+        genres: [],
         rate: -1,
       },
 
       rates: [
         {
+          value: -1,
+          label: "不选择",
+        },
+        {
           //电影评价
-          value: "1",
+          value: 1,
           label: "较好",
         },
         {
-          value: "0",
+          value: 0,
           label: "较差",
         },
       ],
 
-        allGenre: [
+      allGenre1: [
         "Film-Noir",
         "Action",
         "War",
@@ -153,6 +206,8 @@ export default {
         "Comedy",
         "Mystery",
         "Musical",
+      ],
+      allGenre2: [
         "Short",
         "Talk-Show",
         "Adventure",
@@ -172,8 +227,8 @@ export default {
       currentPage: 1,
       pagesize: 10,
 
-      selectVisible: false,
-      selectValue: "", //选择的值
+      inputVisible: false,
+      inputValue: "",
     };
   },
 
@@ -192,12 +247,17 @@ export default {
     },
 
     //任意组合查询
-    search() {
-      fetch(this.$URL + "/Information/SearchCombination" + this.search, {
-        method: "GET",
+    searchCombination() {
+      fetch(this.$URL + "/Information/SearchCombination", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.search),
       }).then((response) => {
         let result = response.json();
         result.then((result) => {
+          console.log(result);
           this.tableData = result.data;
           this.time = result.time + "毫秒";
           this.timeDialogVisible = "true";
@@ -232,24 +292,21 @@ export default {
       this.search.genres.splice(this.search.genres.indexOf(tag), 1);
     },
 
-    // showSelect() {
-    //   this.selectVisible = true;
-    //   this.$nextTick((_) => {
-    //     this.$refs.saveTagSelect.$refs..focus();
-    //   });
-    // },
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick((_) => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
 
-    // handleSelectConfirm() {
-    //   const selectValue = this.selectValue;
-    //   if (selectValue) {
-    //     this.search.genres.push(selecttValue);
-    //   }
-    //   this.selectValue = "";
-    //   this.selectVisible = false;
-    //   for (let tag of this.dynamicTags) {
-    //     console.log(tag);
-    //   }
-    // },
+    handleInputConfirm() {
+      const inputValue = this.inputValue;
+      if (inputValue) {
+        this.search.genres.push(inputValue);
+      }
+      this.inputVisible = false;
+      this.inputValue = "";
+    },
 
     //电影口碑过滤器
     stateFormat(row) {
@@ -257,13 +314,35 @@ export default {
       else if (row.rate == "0") return "较差";
     },
 
-     //强制循环
+    //强制循环
     change() {
       this.$forceUpdate();
     },
+
+    //远程搜索
+    querySearch(queryString, cb) {
+      var persons = this.persons;
+      var results = queryString
+        ? persons.name.filter(this.createStateFilter(queryString))
+        : persons.name;
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 3000 * Math.random());
+    },
+    createStateFilter(queryString) {
+      return (search) => {
+        return (
+          search.name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1
+        );
+      };
+    },
+
+    loadAllPerson() {
+      return this.allData;
+    },
   },
   mounted() {
-    this.getAll();
   },
 };
 </script>
@@ -302,19 +381,16 @@ export default {
   margin-left: 10px;
 }
 .button-new-tag {
-  margin-left: 10px;
   height: 32px;
   line-height: 30px;
   padding-top: 0;
   padding-bottom: 0;
 }
 .input-new-tag {
-  width: 200px;
   margin-left: 10px;
-  margin-right: 10px;
+  width: 90px;
   vertical-align: bottom;
 }
-
 .tag-group {
   margin-bottom: 8px;
 }

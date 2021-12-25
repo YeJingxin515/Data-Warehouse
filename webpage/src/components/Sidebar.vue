@@ -76,7 +76,7 @@ export default {
           },
           {
             index: "/review",
-            title: "评论查询",
+            title: "评价查询",
           },
           {
             index: "/person",
