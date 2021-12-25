@@ -86,8 +86,18 @@ export default {
       },
       {
         icon: "el-icon-pie-chart",
-        index: "/tabs",
+        index: "/neo4j",
         title: "Node4j图数据库",
+        subs: [
+          {
+            index: "/neo4j/co",
+            title: "合作关系查询",
+          },
+          {
+            index: "/neo4j/pm",
+            title: "人物-电影查询",
+          },
+        ]
       },
       {
         icon: "el-icon-menu",

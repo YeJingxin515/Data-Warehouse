@@ -62,6 +62,22 @@ const routes = [
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/Information.vue")
             },
+            {
+                path: "/neo4j/co",
+                name: "neo4j_q2",
+                meta: {
+                    title: '合作关系查询'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/neo4j_q2.vue"),
+            },
+            {
+                path: "/neo4j/pm",
+                name: "neo4j_q1",
+                meta: {
+                    title: '人物-电影查询'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/neo4j_q1.vue"),
+            },
         ]
     }, 
 

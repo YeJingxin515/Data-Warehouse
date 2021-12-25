@@ -5,6 +5,9 @@ import store from './store'
 import installElementPlus from './plugins/element'
 import { URL } from './gobal'
 import './assets/css/icon.css'
+// import axios from 'axios'
+// Vue.prototype.$axios = axios
+
 
 const app = createApp(App)
 app.config.globalProperties.$URL=URL
