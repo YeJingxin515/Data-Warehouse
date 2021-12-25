@@ -78,6 +78,30 @@ const routes = [
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/neo4j_q1.vue"),
             },
+            {
+                path: "/hive/genre",
+                name: "hive_genre",
+                meta: {
+                    title: '类型查询'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/Hive_genre.vue"),
+            },
+            {
+                path: "/hive/time",
+                name: "hive_time",
+                meta: {
+                    title: '时间查询'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/Hive_time.vue"),
+            },
+            {
+                path: "/hive/person",
+                name: "hive_person",
+                meta: {
+                    title: '人物查询'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/Hive_person.vue"),
+            },
         ]
     }, 
 

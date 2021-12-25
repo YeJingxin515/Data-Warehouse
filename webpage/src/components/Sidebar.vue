@@ -103,6 +103,20 @@ export default {
         icon: "el-icon-menu",
         index: "/charts",
         title: "Hbase分布式数据库 ",
+         subs: [
+          {
+            index: "/hive/genre",
+            title: "类型查询",
+          },
+          {
+            index: "/hive/time",
+            title: "时间查询",
+          },
+          {
+            index: "/hive/person",
+            title: "人物查询",
+          },
+        ]
       },
       {
         icon: "el-icon-cpu",
