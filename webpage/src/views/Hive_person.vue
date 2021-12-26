@@ -26,10 +26,7 @@
         <el-button type="primary" icon="el-icon-search" @click="searchAll"
           >搜索</el-button
         >
-        <el-button
-          plain
-          type="primary"
-          @click="timeDialogVisible = true"
+        <el-button plain type="primary" @click="timeDialogVisible = true"
           >显示上一次搜索时间</el-button
         >
       </div>
@@ -37,12 +34,7 @@
       <el-tabs type="border-card" @tab-click="changeState">
         <el-tab-pane label="导演的电影">
           <el-table
-            :data="
-              tableData1.slice(
-                (currentPage - 1) * pagesize,
-                currentPage * pagesize
-              )
-            "
+            :data="tableData1"
             style="width: 100%"
             :cell-style="{ textAlign: 'center' }"
             :header-cell-style="{ textAlign: 'center' }"
@@ -54,20 +46,28 @@
               align="center"
             ></el-table-column>
             <el-table-column
-              prop="filmName"
+              prop="title"
               label="导演的电影"
               align="center"
             ></el-table-column>
+            <el-table-column label="产品">
+              <template v-slot="scope">
+                <el-button
+                  style="padding: 0px 2px"
+                  v-for="item in scope.row.asins"
+                  :key="item"
+                  size="mini"
+                  type="warning"
+                  @click="jump(item.slice(1, item.length - 1))"
+                  >{{ item.slice(1, item.length - 1) }}</el-button
+                >
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
         <el-tab-pane label="参演的电影">
           <el-table
-            :data="
-              tableData2.slice(
-                (currentPage - 1) * pagesize,
-                currentPage * pagesize
-              )
-            "
+            :data="tableData2"
             style="width: 100%"
             :cell-style="{ textAlign: 'center' }"
             :header-cell-style="{ textAlign: 'center' }"
@@ -79,46 +79,26 @@
               align="center"
             ></el-table-column>
             <el-table-column
-              prop="filmName"
+              prop="title"
               label="参演的电影"
               align="center"
             ></el-table-column>
-          </el-table>
-        </el-tab-pane>
-        <el-tab-pane label="所有人物">
-          <el-table
-            :data="
-              allPerson.slice(
-                (currentPage - 1) * pagesize,
-                currentPage * pagesize
-              )
-            "
-            style="width: 100%"
-            :cell-style="{ textAlign: 'center' }"
-            :header-cell-style="{ textAlign: 'center' }"
-            stripe
-          >
-            <el-table-column
-              prop="name"
-              label="人物姓名"
-              align="center"
-            ></el-table-column>
+            <el-table-column label="产品">
+              <template v-slot="scope">
+                <el-button
+                  style="padding: 0px 2px"
+                  v-for="item in scope.row.asins"
+                  :key="item"
+                  size="mini"
+                  type="warning"
+                  @click="jump(item.slice(1, item.length - 1))"
+                  >{{ item.slice(1, item.length - 1) }}</el-button
+                >
+              </template>
+            </el-table-column>
           </el-table>
         </el-tab-pane>
       </el-tabs>
-
-      <div class="pagination">
-        <el-pagination
-          v-model:currentPage="currentPage"
-          :page-sizes="[10, 50, 100, 200]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="allPerson.length"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        >
-        </el-pagination>
-      </div>
     </div>
   </div>
 </template>
@@ -141,10 +121,6 @@ export default {
       timeDialogVisible: false, //显示查询时间
       time1: "", //查询导演时间
       time2: "", //查询演员时间
-
-      currentPage: 1,
-      pagesize: 10,
-      totalPage: "",
     };
   },
 
@@ -157,6 +133,39 @@ export default {
         let result = response.json();
         result.then((result) => {
           this.allPerson = result;
+        });
+      });
+    },
+
+    //搜索演员导演的电影
+    searchDirector() {
+      fetch("http://localhost:8089/hive/by-people/director?name=" + this.search, {
+        method: "GET",
+      }).then((response) => {
+        let result = response.json();
+        result.then((result) => {
+          console.log(result);
+          this.tableData1 = result.data.results;
+          this.time1 = result.data.time + "毫秒";
+          this.timeDialogVisible = "true";
+        });
+      });
+    },
+
+    //搜索演员参演的电影
+    searchActor() {
+      fetch(
+        "http://localhost:8089/hive/by-people/actor?name=" + this.search,
+        {
+          method: "GET",
+        }
+      ).then((response) => {
+        let result = response.json();
+        result.then((result) => {
+          console.log(result);
+          this.tableData2 = result.data.results;
+          this.time2 = result.data.time + "毫秒";
+          this.timeDialogVisible = "true";
         });
       });
     },
@@ -185,43 +194,12 @@ export default {
       };
     },
 
-    //搜索演员导演的电影
-    searchDirector() {
-      fetch(this.$URL + "/Person/Director?name=" + this.search, {
-        method: "GET",
-      }).then((response) => {
-        let result = response.json();
-        result.then((result) => {
-          this.tableData1 = result.data;
-          this.totalPage = this.tableData1.length;
-          this.time1 = result.time + "毫秒";
-          this.timeDialogVisible = "true";
-        });
-      });
-    },
-
-    //搜索演员参演的电影
-    searchActor() {
-      fetch(this.$URL + "/Person/Actor?name=" + this.search, {
-        method: "GET",
-      }).then((response) => {
-        let result = response.json();
-        result.then((result) => {
-          this.tableData2 = result.data;
-          this.totalPage = this.tableData2.length;
-          this.time2 = result.time + "毫秒";
-          this.timeDialogVisible = "true";
-        });
-      });
-    },
-
     //全部搜索
     searchAll() {
       this.searchDirector();
       this.searchActor();
-      this.getAllPerson();
+      console.log(1);
     },
-
     //分页
     handleSizeChange(pagesize) {
       this.pagesize = pagesize;
@@ -229,10 +207,13 @@ export default {
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage;
     },
+
+    jump(asin) {
+      window.open("https://www.amazon.com/dp/" + asin, "_blank");
+    },
   },
 
   mounted() {
-    this.getAllPerson();
     setTimeout(() => {
       this.persons.name = this.loadAllPerson();
     }, 2000);

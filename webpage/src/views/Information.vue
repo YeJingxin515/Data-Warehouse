@@ -19,7 +19,10 @@
         <el-button type="primary" icon="el-icon-search" @click="searchByName"
           >搜索</el-button
         >
-        <el-button type="primary" icon="el-icon-search" @click="searchCombination"
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          @click="searchCombination"
           >组合查询</el-button
         >
         <el-button plain type="primary" @click="timeDialogVisible = true"
@@ -133,13 +136,12 @@
           label="版本数量"
           align="center"
         ></el-table-column>
-        <el-table-column
-          prop="dateFrom"
-          label="数据源"
-          align="center"
-        ></el-table-column>
         <el-table-column label="电影口碑" prop="rate" :formatter="stateFormat">
         </el-table-column>
+        <el-table-column
+          prop="dateFrom"
+          label="产品"
+        ></el-table-column>
       </el-table>
       <div class="pagination">
         <el-pagination
@@ -342,8 +344,7 @@ export default {
       return this.allData;
     },
   },
-  mounted() {
-  },
+  mounted() {},
 };
 </script>
 

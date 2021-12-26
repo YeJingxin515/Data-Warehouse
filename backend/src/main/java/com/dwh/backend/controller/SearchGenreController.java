@@ -29,9 +29,9 @@ public class SearchGenreController {
     @RequestMapping(method = RequestMethod.GET)
     public Object searchGenre(String name) {
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmGenre> result = filmGenreRepository.findByGenreName(name);
-        long end =System.nanoTime();
+        long end =System.currentTimeMillis();
         jsonObject.put("data",result);
         jsonObject.put("time",end-start);
         return jsonObject;

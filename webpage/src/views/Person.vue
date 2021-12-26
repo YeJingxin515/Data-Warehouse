@@ -85,26 +85,6 @@
             ></el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="所有人物">
-          <el-table
-            :data="
-              allPerson.slice(
-                (currentPage - 1) * pagesize,
-                currentPage * pagesize
-              )
-            "
-            style="width: 100%"
-            :cell-style="{ textAlign: 'center' }"
-            :header-cell-style="{ textAlign: 'center' }"
-            stripe
-          >
-            <el-table-column
-              prop="name"
-              label="人物姓名"
-              align="center"
-            ></el-table-column>
-          </el-table>
-        </el-tab-pane>
       </el-tabs>
 
       <div class="pagination">

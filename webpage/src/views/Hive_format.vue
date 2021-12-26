@@ -1,33 +1,27 @@
 <template>
   <div>
     <!-- 查询时间的弹窗 -->
-    <el-dialog v-model="timeDialogVisible" title="搜索时间" width="30%">
+    <el-dialog v-model="timeDialogVisible" title="查询时间" width="30%">
       <el-input v-model="time" disabled />
     </el-dialog>
 
     <div class="container">
-      <div class="handle-box">
-        <el-select
-          v-model="search"
-          placeholder="电影类型"
-          @change="searchByGenre"
-        >
-          <el-option
-            v-for="(item, index) in allGenre"
-            :key="index"
-            :label="item.genreName"
-            :value="item.genreName"
-          ></el-option>
-        </el-select>
-        <el-button plain type="primary" @click="timeDialogVisible = true"
-          >显示上一次搜索时间
-        </el-button>
-      </div>
+      <el-input
+        v-model="search"
+        placeholder="输入电影名字"
+        @input="change"
+        class="handle-input"
+        clearable
+      ></el-input
+      ><el-button type="primary" @click="searchByName">搜索</el-button
+      ><el-button plain type="primary" @click="timeDialogVisible = true"
+        >显示上一次搜索时间</el-button
+      >
       <el-table
         :data="
           tableData.slice((currentPage - 1) * pagesize, currentPage * pagesize)
         "
-        style="width: 100%"
+        style="width: 100% margin-top:10px"
         :cell-style="{ textAlign: 'center' }"
         :header-cell-style="{ textAlign: 'center' }"
         stripe
@@ -38,25 +32,22 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="genre"
-          label="电影类型"
+          prop="rating"
+          label="电影等级"
           align="center"
         ></el-table-column>
-        <el-table-column
+        <el-table-colum
           prop="releaseDate"
           label="发行日期"
           align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="rating"
-          label="等级"
-          align="center"
-        ></el-table-column>
+        ></el-table-colum>
         <el-table-column
           prop="genre"
           label="电影类型"
           align="center"
         ></el-table-column>
+        <el-table-column label="版本数量" prop="formatNum" align="center">
+        </el-table-column>
         <el-table-column label="产品">
           <template v-slot="scope">
             <el-button
@@ -71,7 +62,6 @@
           </template>
         </el-table-column>
       </el-table>
-
       <div class="pagination">
         <el-pagination
           v-model:currentPage="currentPage"
@@ -89,52 +79,48 @@
 </template>
 
 <script>
+import { ref } from "@vue/reactivity";
 export default {
-  name: "genre",
   data() {
     return {
-      allGenre: [], //所有版本类型
       tableData: [], //表格数据
-      search: "", //类型名字
+
       timeDialogVisible: false, //显示查询时间
       time: "", //查询时间
 
+      search: "", //搜索的电影名字
+
       currentPage: 1,
       pagesize: 10,
+
+      inputVisible: false,
+      inputValue: "",
     };
   },
+
   methods: {
-    // 获取表格数据,搜索电影类型
-    searchByGenre() {
-      fetch("http://localhost:8089/hive/by-genre/genre?genre=" + this.search, {
-        method: "POST",
+    //电影名字搜索
+    searchByName() {
+      fetch("http://localhost:8089/hive/by-title/?title=" + this.search, {
+        method: "GET",
       }).then((response) => {
         let result = response.json();
         result.then((result) => {
-          console.log(result);
+          console.log(result.data.results);
           this.tableData = result.data.results;
-          console.log(this.tableData);
           this.time = result.data.time + "毫秒";
           this.timeDialogVisible = "true";
         });
       });
     },
-
-    // 获取所有电影类型数据
-    getAllGenre() {
-      fetch(this.$URL + "/Genre/All", {
-        method: "GET",
-      }).then((response) => {
-        let result = response.json();
-        result.then((result) => {
-          this.allGenre = result;
-        });
-      });
+    //强制循环
+    change() {
+      this.$forceUpdate();
     },
 
     //分页
-    handleSizeChange(size) {
-      this.pagesize = size;
+    handleSizeChange(pagesize) {
+      this.pagesize = pagesize;
     },
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage;
@@ -143,9 +129,7 @@ export default {
       window.open("https://www.amazon.com/dp/" + asin, "_blank");
     },
   },
-  mounted() {
-    this.getAllGenre();
-  },
+  mounted() {},
 };
 </script>
 
@@ -159,7 +143,7 @@ export default {
 }
 
 .handle-input {
-  width: 400px;
+  width: 300px;
   display: inline-block;
 }
 .table {
@@ -177,5 +161,26 @@ export default {
   margin: auto;
   width: 40px;
   height: 40px;
+}
+
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  margin-left: 10px;
+  width: 90px;
+  vertical-align: bottom;
+}
+.tag-group {
+  margin-bottom: 8px;
+}
+.tag-group-title {
+  margin-right: 8px;
 }
 </style>

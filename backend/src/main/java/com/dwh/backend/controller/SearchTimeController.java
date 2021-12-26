@@ -21,9 +21,9 @@ public class SearchTimeController{
     @RequestMapping(value= "Year",method = RequestMethod.POST)
     public Object getByYear(@RequestBody TimeObject time){
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmTime> targetFilm = filmTimeRepository.findByYear(Integer.parseInt(time.getYear()));
-        long end=System.nanoTime();
+        long end=System.currentTimeMillis();
         jsonObject.put("data",targetFilm);
         jsonObject.put("time",end-start);
         return jsonObject;
@@ -33,9 +33,9 @@ public class SearchTimeController{
     @RequestMapping(value= "YearAndMonth",method = RequestMethod.POST)
     public Object getByYearAndMonth(@RequestBody TimeObject time){
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmTime> targetFilm = filmTimeRepository.findByYearAndMonth(Integer.parseInt(time.getYear()), Integer.parseInt(time.getMonth()));
-        long end=System.nanoTime();
+        long end=System.currentTimeMillis();
         if (targetFilm.isEmpty()) {
             jsonObject.put("message", "您查找的电影不存在不存在，查找信息失败!");
             jsonObject.put("status", -1);
@@ -50,9 +50,9 @@ public class SearchTimeController{
     @RequestMapping(value= "YearAndQuarter",method = RequestMethod.POST)
     public Object getByYearAndQuarter(@RequestBody TimeObject time){
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmTime> targetFilm = filmTimeRepository.findByYearAndQuarter(Integer.parseInt(time.getYear()),Integer.parseInt(time.getQuarter()));
-        long end=System.nanoTime();
+        long end=System.currentTimeMillis();
         if (targetFilm.isEmpty()) {
             jsonObject.put("message", "您查找的电影不存在不存在，查找信息失败!");
             jsonObject.put("status", -1);
@@ -67,9 +67,9 @@ public class SearchTimeController{
     @RequestMapping(value="All",method = RequestMethod.GET)
     public Object getAll(){
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmTime> targetFilm = filmTimeRepository.findAll();
-        long end=System.nanoTime();
+        long end=System.currentTimeMillis();
         jsonObject.put("data",targetFilm);
         jsonObject.put("time",end-start);
         return jsonObject;

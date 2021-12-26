@@ -61,7 +61,7 @@ export default {
         index: "0",
         title: "MySQL关系型数据库",
         subs: [
-              {
+          {
             index: "/information",
             title: "信息查询",
           },
@@ -69,7 +69,7 @@ export default {
             index: "/genre",
             title: "类型查询",
           },
-      
+
           {
             index: "/time",
             title: "时间查询",
@@ -97,13 +97,13 @@ export default {
             index: "/neo4j/pm",
             title: "人物-电影查询",
           },
-        ]
+        ],
       },
       {
         icon: "el-icon-menu",
         index: "/charts",
         title: "Hbase分布式数据库 ",
-         subs: [
+        subs: [
           {
             index: "/hive/genre",
             title: "类型查询",
@@ -116,12 +116,15 @@ export default {
             index: "/hive/person",
             title: "人物查询",
           },
-        ]
-      },
-      {
-        icon: "el-icon-cpu",
-        index: "/charts",
-        title: "数据库性能对比",
+          {
+            index: "/hive/review",
+            title: "评价查询",
+          },
+          {
+            index: "/hive/format",
+            title: "版本查询",
+          },
+        ],
       },
     ];
 

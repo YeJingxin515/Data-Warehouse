@@ -13,7 +13,7 @@
         <el-collapse-item title="分数区间查询" name="1">
           <div class="demo-collapse">
             <el-input
-              v-model="scale.low"
+              v-model="left"
               placeholder="输入最低分"
               @input="change"
               class="handle-input"
@@ -21,12 +21,13 @@
             ></el-input>
 
             <el-input
-              v-model="scale.high"
+              v-model="right"
               placeholder="输入最高分"
               @input="change"
               class="handle-input"
               clearable
             ></el-input>
+
             <el-button
               type="primary"
               icon="el-icon-search"
@@ -78,21 +79,44 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="rate"
-          label="电影口碑"
+          prop="rating"
+          label="电影等级"
           align="center"
-          :formatter="stateFormat"
+        ></el-table-column>
+        <el-table-colum
+          prop="releaseDate"
+          label="发行日期"
+          align="center"
+        ></el-table-colum>
+        <el-table-column
+          prop="genre"
+          label="电影类型"
+          align="center"
         ></el-table-column>
         <el-table-column
-          prop="overall"
+          prop="language"
+          label="版本数量"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="avgOverall"
           label="平均分"
           align="center"
         ></el-table-column>
-        <el-table-column
-          prop="dateFrom"
-          label="产品"
-          align="center"
-        ></el-table-column>
+        、
+        <el-table-column label="产品">
+          <template v-slot="scope">
+            <el-button
+              style="padding: 0px 2px"
+              v-for="item in scope.row.asins"
+              :key="item"
+              size="mini"
+              type="warning"
+              @click="jump(item.slice(1, item.length - 1))"
+              >{{ item.slice(1, item.length - 1) }}</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
       <div class="pagination">
         <el-pagination
@@ -131,12 +155,12 @@ export default {
           label: "较差",
         },
       ],
-      scale:{
-        low:"",
-        high:""
-      },
+
       searchScore: "", //搜索的具体分数
       searchRate: "", //搜索的电影口碑
+
+      left: "",
+      right: "",
 
       currentPage: 1,
       pagesize: 10,
@@ -149,18 +173,19 @@ export default {
   methods: {
     //区间搜索
     searchByScale() {
-      fetch(this.$URL + "/Score/Scale", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(this.scale),
-      }).then((response) => {
+      fetch(
+        "http://localhost:8089/hive/by-review/scores-between?left=" +
+          this.left +
+          "&right=" +
+          this.right,
+        {
+          method: "GET",
+        }
+      ).then((response) => {
         let result = response.json();
         result.then((result) => {
-          console.log(result.data),
-          this.tableData = result.data;
-          this.time = result.time + "毫秒";
+          this.tableData = result.data.results;
+          this.time = result.data.time + "毫秒";
           this.timeDialogVisible = "true";
         });
       });
@@ -168,14 +193,13 @@ export default {
 
     //根据分数搜索
     searchByScore() {
-      fetch(this.$URL +"/Score/Overall?overall=" + this.searchScore, {
+      fetch("http://localhost:8089/hive/by-review/score?score=" + this.searchScore, {
         method: "GET",
       }).then((response) => {
         let result = response.json();
         result.then((result) => {
-          console.log(result.data),
-          this.tableData = result.data;
-          this.time = result.time + "毫秒";
+          this.tableData = result.data.results;
+          this.time = result.data.time + "毫秒";
           this.timeDialogVisible = "true";
         });
       });
@@ -184,15 +208,15 @@ export default {
     //根据分数搜索
     searchByRate() {
       fetch(
-        "/Score/Rate?rate=" + this.searchRate,
+        "http://localhost:8089/hive/by-review/rating?rating=" + this.searchRate,
         {
           method: "GET",
         }
       ).then((response) => {
         let result = response.json();
         result.then((result) => {
-          this.tableData = result.data;
-          this.time = result.time + "毫秒";
+          this.tableData = result.data.results;
+          this.time = result.data.time + "毫秒";
           this.timeDialogVisible = "true";
         });
       });
@@ -205,13 +229,6 @@ export default {
     handleCurrentChange(currentPage) {
       this.currentPage = currentPage;
     },
-
-       //电影口碑过滤器
-    stateFormat(row) {
-      if (row.rate == "1") return "较好";
-      else if (row.rate == "0") return "较差";
-    },
-
 
     //强制循环
     change() {

@@ -28,9 +28,9 @@ public class SearchInformationController {
     @RequestMapping(value = "SearchFormat",method = RequestMethod.POST)
     public Object searchFormat(String name){
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmMerged> result = filmMergedRepository.findByTitle(name);
-        long end =System.nanoTime();
+        long end =System.currentTimeMillis();
         jsonObject.put("data",result);
         jsonObject.put("time",end-start);
         return jsonObject;
@@ -43,15 +43,15 @@ public class SearchInformationController {
         List<String>genres=film.getGenres();
         Integer rate= Integer.parseInt(film.getRate());
         if(genres==null&&rate!=-1){//只查询好评
-            long start=System.nanoTime();
+            long start=System.currentTimeMillis();
             List<FilmMerged> result = filmMergedRepository.findByRate(rate);
-            long end =System.nanoTime();
+            long end =System.currentTimeMillis();
             jsonObject.put("data",result);
             jsonObject.put("time",end-start);
         }else if(rate==-1&&genres!=null) {//查询组合类型的电影类型
             List<FilmMerged> result = new ArrayList<>();
             List<FilmMerged> allFilm = filmMergedRepository.findAll();
-            long start=System.nanoTime();
+            long start=System.currentTimeMillis();
             for (FilmMerged fm : allFilm) {
                 Boolean flag = true;
                 for (String genre :genres) {
@@ -64,12 +64,12 @@ public class SearchInformationController {
                     result.add(fm);
                 }
             }
-            long end=System.nanoTime();
+            long end=System.currentTimeMillis();
             jsonObject.put("data",result);
             jsonObject.put("time",end-start);
         }else if(rate!=-1&&genres!=null){
             List<FilmMerged> result = new ArrayList<>();
-            long start=System.nanoTime();
+            long start=System.currentTimeMillis();
             List<FilmMerged> matchRate = filmMergedRepository.findByRate(rate);
             for (FilmMerged fm : matchRate) {
                 Boolean flag = true;
@@ -83,7 +83,7 @@ public class SearchInformationController {
                     result.add(fm);
                 }
             }
-            long end =System.nanoTime();
+            long end =System.currentTimeMillis();
             jsonObject.put("data",result);
             jsonObject.put("time",end-start);
         }else{

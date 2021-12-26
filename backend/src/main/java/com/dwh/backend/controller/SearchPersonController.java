@@ -31,9 +31,9 @@ public class SearchPersonController {
     @RequestMapping(value= "AllDirector",method = RequestMethod.GET)
     public Object getAllDirector(){
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmDirector> targetFilm = filmDirectorRepository.findAll();
-        long end=System.nanoTime();
+        long end=System.currentTimeMillis();
         jsonObject.put("data",targetFilm);
         jsonObject.put("time",end-start);
         return jsonObject;
@@ -43,9 +43,9 @@ public class SearchPersonController {
     @RequestMapping(value= "AllActor",method = RequestMethod.GET)
     public Object getAllActor(){
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmActor> targetFilm =  filmActorRepository.findAll();
-        long end=System.nanoTime();
+        long end=System.currentTimeMillis();
         jsonObject.put("data",targetFilm);
         jsonObject.put("time",end-start);
         return jsonObject;
@@ -55,9 +55,9 @@ public class SearchPersonController {
     @RequestMapping(value= "Director",method = RequestMethod.GET)
     public Object getByDirector(String name){
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmDirector> targetFilm = filmDirectorRepository.findByDirectorName(name);
-        long end=System.nanoTime();
+        long end=System.currentTimeMillis();
         jsonObject.put("data",targetFilm);
         jsonObject.put("time",end-start);
         return jsonObject;
@@ -67,9 +67,9 @@ public class SearchPersonController {
     @RequestMapping(value= "Actor",method = RequestMethod.GET)
     public Object getByActor(String name){
         JSONObject jsonObject = new JSONObject();
-        long start=System.nanoTime();
+        long start=System.currentTimeMillis();
         List<FilmActor> targetFilm = filmActorRepository.findByActorName(name);
-        long end=System.nanoTime();
+        long end=System.currentTimeMillis();
         jsonObject.put("data",targetFilm);
         jsonObject.put("time",end-start);
         return jsonObject;

@@ -43,7 +43,6 @@
           ></el-option>
         </el-select>
         <el-button type="primary" @click="searchFilm">搜索</el-button>
-        <el-button type="primary" @click="getAll">所有数据</el-button>
         <el-button plain type="primary" @click="timeDialogVisible = true"
           >显示上一次搜索时间</el-button
         >
@@ -148,26 +147,12 @@ export default {
     };
   },
   methods: {
-    //获取所有数据
-    getAll() {
-      fetch(this.$URL + "/Time/All", {
-        method: "GET",
-      }).then((response) => {
-        let result = response.json();
-        result.then((result) => {
-          this.tableData = result.data;
-          this.allData = result.data;
-          this.time = result.time + "毫秒";
-          this.timeDialogVisible = "true";
-        });
-      });
-    },
 
     //搜索某一年的电影
     searchFilm() {
       //搜索年份
       if (this.search.month == 0 && this.search.quarter == 0) {
-        fetch("http://localhost:8080/hive/by-time/year?year="+this.search.year, {
+        fetch("http://localhost:8089/hive/by-time/year?year="+this.search.year, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -182,7 +167,7 @@ export default {
         });
         //搜索年月
       } else if (this.search.month != 0) {
-        fetch("http://localhost:8080/hive/by-time/year-month?year="+this.search.year+"&month="+this.search.month, {
+        fetch("http://localhost:8089/hive/by-time/year-month?year="+this.search.year+"&month="+this.search.month, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -198,7 +183,7 @@ export default {
         });
         //年季度
       } else if (this.search.quarter != 0) {
-        fetch("http://localhost:8080/hive/by-time/year-quarter?year="+this.search.year+"&quarter="+this.search.quarter, {
+        fetch("http://localhost:8089/hive/by-time/year-quarter?year="+this.search.year+"&quarter="+this.search.quarter, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

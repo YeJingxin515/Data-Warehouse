@@ -14,14 +14,7 @@ const routes = [
                     title: '图表'
                 },
                 component: () => import ( /* webpackChunkName: "charts" */ "../views/BaseCharts.vue")
-            }, {
-                path: "/tabs",
-                name: "tabs",
-                meta: {
-                    title: 'tab标签'
-                },
-                component: () => import ( /* webpackChunkName: "tabs" */ "../views/Tabs.vue")
-            },
+            }, 
             {
                 path: "/person",
                 name: "person",
@@ -102,6 +95,22 @@ const routes = [
                 },
                 component: () => import ( /* webpackChunkName: "table" */ "../views/Hive_person.vue"),
             },
+            {
+                path: "/hive/review",
+                name: "hive_review",
+                meta: {
+                    title: '评价查询'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/Hive_review.vue"),
+            },
+            {
+                path: "/hive/format",
+                name: "hive_format",
+                meta: {
+                    title: '版本查询'
+                },
+                component: () => import ( /* webpackChunkName: "table" */ "../views/Hive_format.vue"),
+            },
         ]
     }, 
 
@@ -109,7 +118,6 @@ const routes = [
 
 const router = createRouter({
     history: createWebHashHistory(),
-    // history: createWebHistory(process.env.BASE_URL),
     routes
 });
 
