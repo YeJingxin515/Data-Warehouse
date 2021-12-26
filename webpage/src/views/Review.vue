@@ -184,7 +184,7 @@ export default {
     //根据分数搜索
     searchByRate() {
       fetch(
-        "/Score/Rate?rate=" + this.searchRate,
+        this.$URL+"/Score/Rate?rate=" + this.searchRate,
         {
           method: "GET",
         }

@@ -41,7 +41,7 @@
             stripe
           >
             <el-table-column
-              prop="directorName"
+              prop="peopleName"
               label="人物姓名"
               align="center"
             ></el-table-column>

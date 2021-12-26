@@ -33,7 +33,7 @@
           :disabled="search.quarter != '0'"
           placeholder="选取月份"
           @change="change"
-          class="handle-select mr10"
+          class="handle-select"
         >
           <el-option
             v-for="(item, index) in month"
@@ -42,7 +42,16 @@
             :value="item.num"
           ></el-option>
         </el-select>
+        <el-input
+          v-model="search.date"
+          placeholder="输入某天"
+          @input="change"
+          class="handle-select mr10"
+          clearable
+        ></el-input>
         <el-button type="primary" @click="searchFilm">搜索</el-button>
+
+        <el-button type="primary" @click="searchAdd">新增查询</el-button>
         <el-button type="primary" @click="getAll">所有数据</el-button>
         <el-button plain type="primary" @click="timeDialogVisible = true"
           >显示上一次搜索时间</el-button
@@ -137,6 +146,7 @@ export default {
         year: "",
         month: 0,
         quarter: 0,
+        date: "",
       },
 
       timeDialogVisible: false, //显示查询时间
@@ -213,6 +223,24 @@ export default {
           });
         });
       }
+    },
+
+    searchAdd() {
+      fetch(this.$URL + "/Time/SomeDay", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(this.search),
+      }).then((response) => {
+        let result = response.json();
+        result.then((result) => {
+          console.log(result.data);
+          this.tableData = result.data;
+          this.time = result.time + "毫秒";
+          this.timeDialogVisible = "true";
+        });
+      });
     },
 
     //分页

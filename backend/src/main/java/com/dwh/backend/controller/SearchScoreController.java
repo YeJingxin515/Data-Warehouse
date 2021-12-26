@@ -44,7 +44,7 @@ public class SearchScoreController {
         JSONObject jsonObject = new JSONObject();
         List<FilmRate> result = new ArrayList<>();
         long start=System.currentTimeMillis();
-        filmRateRepository.findByOverall(Double.valueOf(overall));
+        result =filmRateRepository.findByOverall(Double.valueOf(overall));
         long end =System.currentTimeMillis();
         jsonObject.put("data",result);
         jsonObject.put("time",end-start);
@@ -57,7 +57,7 @@ public class SearchScoreController {
         JSONObject jsonObject = new JSONObject();
         List<FilmRate> result = new ArrayList<>();
         long start=System.currentTimeMillis();
-        filmRateRepository.findByRate(Integer.valueOf(rate));
+        result=filmRateRepository.findByRate(Integer.parseInt(rate));
         long end =System.currentTimeMillis();
         jsonObject.put("data",result);
         jsonObject.put("time",end-start);

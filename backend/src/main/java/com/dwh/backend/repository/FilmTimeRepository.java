@@ -11,4 +11,6 @@ public interface FilmTimeRepository extends JpaRepository<FilmTime, Integer> {
     List<FilmTime> findByYear(Integer year);
     List<FilmTime> findByYearAndMonth(Integer year,Integer month);
     List<FilmTime> findByYearAndQuarter(Integer year,Integer quarter);
+    List<FilmTime> findByYearAndMonthAndDate(Integer year,Integer month,Integer date);
+
 }

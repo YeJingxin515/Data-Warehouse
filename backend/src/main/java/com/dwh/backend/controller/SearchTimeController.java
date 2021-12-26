@@ -63,6 +63,23 @@ public class SearchTimeController{
         return jsonObject;
     }
 
+    //查询某天的电影
+    @RequestMapping(value= "SomeDay",method = RequestMethod.POST)
+    public Object getByDay(@RequestBody TimeObject time){
+        JSONObject jsonObject = new JSONObject();
+        long start=System.currentTimeMillis();
+        List<FilmTime> targetFilm = filmTimeRepository.findByYearAndMonthAndDate(Integer.parseInt(time.getYear()),Integer.parseInt(time.getMonth()),Integer.parseInt(time.getDate()));
+        long end=System.currentTimeMillis();
+        if (targetFilm.isEmpty()) {
+            jsonObject.put("message", "您查找的电影不存在不存在，查找信息失败!");
+            jsonObject.put("status", -1);
+        } else {
+            jsonObject.put("data",targetFilm);
+            jsonObject.put("time",end-start);
+        }
+        return jsonObject;
+    }
+
     //表格所有数据
     @RequestMapping(value="All",method = RequestMethod.GET)
     public Object getAll(){
@@ -82,6 +99,7 @@ public class SearchTimeController{
         private String year;
         private String month;
         private String quarter;
+        private String date;
     }
 
 }
